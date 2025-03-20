@@ -1,1 +1,1 @@
-# nour-genai-product-design-simpletuner
+# Repo based on SimpleTuner 💹
