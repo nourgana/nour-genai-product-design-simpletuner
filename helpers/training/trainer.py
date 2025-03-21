@@ -630,6 +630,7 @@ class Trainer:
         self.accelerator.wait_for_everyone()
 
     def init_load_base_model(self):
+        print('init_load_base_model')
         webhook_msg = f"Loading model: `{self.config.pretrained_model_name_or_path}`..."
         self._send_webhook_msg(message=webhook_msg)
         self._send_webhook_raw(
@@ -646,6 +647,7 @@ class Trainer:
         )
 
     def init_data_backend(self):
+        print("init data backend...")
         try:
             self.init_clear_backend_cache()
             self._send_webhook_msg(
@@ -1718,11 +1720,15 @@ class Trainer:
             )
 
     def resume_and_prepare(self):
+        print('init_optimizer')
         self.init_optimizer()
         lr_scheduler = self.init_lr_scheduler()
+        print('init_hooks')
         self.init_hooks()
+        print('init_prepare_models')
         self.init_prepare_models(lr_scheduler=lr_scheduler)
         lr_scheduler = self.init_resume_checkpoint(lr_scheduler=lr_scheduler)
+        print('init_post_load_freeze')
         self.init_post_load_freeze()
 
     def enable_sageattention_inference(self):

@@ -16,5 +16,8 @@ __pycache__/
 datasets 
 input
 test_folder
+cache
+.cache
+output
 
 nohup.out

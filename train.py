@@ -60,13 +60,14 @@ if __name__ == "__main__":
         trainer.init_ema_model()
         # EMA must be quantised if the base model is as well.
         trainer.init_precision(ema_only=True)
-
         trainer.move_models(destination="accelerator")
         trainer.init_validations()
         trainer.init_benchmark_base_model()
-
+        
+        print('resume_and_prepare')
         trainer.resume_and_prepare()
-
+        
+        print('init_trackers')
         trainer.init_trackers()
         trainer.train()
     except KeyboardInterrupt:
