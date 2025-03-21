@@ -9,11 +9,12 @@ __pycache__/
 # data 
 
 # credentials
-*.json
+*credentials.json
 
 # folders
-venv
+.venv
 datasets 
 input
+test_folder
 
 nohup.out
