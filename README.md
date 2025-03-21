@@ -1,1 +1,1 @@
-# Repo based on SimpleTuner 💹
+# Inference repo for FLUX based on SimpleTuner 
