@@ -20,5 +20,6 @@ cache
 .cache
 output
 streamlit_app
+simpletuner_sdk
 
 nohup.out
