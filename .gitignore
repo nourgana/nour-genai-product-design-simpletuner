@@ -19,5 +19,6 @@ test_folder
 cache
 .cache
 output
+streamlit_app
 
 nohup.out

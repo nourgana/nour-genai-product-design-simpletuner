@@ -11,16 +11,21 @@ from vertexai.generative_models import (
 )
 import json
 import ast 
+import PIL 
+from google import genai
+from google.genai import types
+from io import BytesIO
+import os 
 
 lora_model = "output/models/checkpoint-4500"
 
 def generate_images(prompt, seed=42, custom=True):
     torch.cuda.empty_cache()
     pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16)
-    pipe.enable_model_cpu_offload()
+    #cpipe.enable_model_cpu_offload()
     if custom:
         pipe.load_lora_weights(lora_model)
-    #pipe.to("cuda")
+    pipe.to("cuda")
 
     torch.cuda.empty_cache()
 
@@ -79,7 +84,28 @@ gemini = GenerativeModel("gemini-2.0-flash",
     HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH})
 
 # -------------------------------------------------------------------------------- NOTEBOOK-CELL: CODE
-def generate_prompt(ambassador, theme):
+
+
+from google import genai
+client = genai.Client(vertexai=True, project=vertexai_project_id, location=vertexai_location)
+
+def imagen3(prompt, number_of_images=1):
+    response = client.models.generate_images(
+    model='imagen-3.0-generate-002',
+    prompt=prompt,
+    config=types.GenerateImagesConfig(
+        number_of_images= number_of_images,
+    ))
+    output = []
+    for generated_image in response.generated_images:
+        image = PIL.Image.open(BytesIO(generated_image.image.image_bytes)) #.save("imagen3.png")
+        output.append(image)
+    return output
+
+
+# -------------------------------------------------------------------------------- NOTEBOOK-CELL: CODE
+
+def generate_prompt(ambassador, theme, movement):
     
     prompt = f"""
 
@@ -94,7 +120,7 @@ def generate_prompt(ambassador, theme):
     Include in the description the following elements in this order (comprehensive list):
     - Case 
     - Bezel 
-    - Mouvement type 
+    - Mouvement type : {movement}
     - Strap 
     - Dial 
     - Indexes 
@@ -146,13 +172,32 @@ def main():
         st.session_state['theme'] = ""
 
     # Step 1: Ask for user inputs
-    st.session_state['ambassador'] = st.text_input("Enter the name of the ambassador:", value=st.session_state['ambassador'])
-    st.session_state['theme'] = st.text_input("Enter the theme of the collaboration:", value=st.session_state['theme'])
+    st.session_state['ambassador'] = st.text_input("Enter the name of the ambassador:", 
+                                                   value=st.session_state['ambassador'],
+                                                   placeholder="for example, Leon Marchand")
+    st.session_state['theme'] = st.text_input("Enter the theme of the collaboration:", 
+                                              value=st.session_state['theme'],
+                                              placeholder="for example, Sports")
+    
+    movement = st.selectbox("Select a movement", options=["Automatic movement",
+        "Hand-wound movement",
+        "Self-winding movement",
+        "Self-winding chronograph movement",
+        "Self-winding movement with moon phase",
+        "Quartz movement",
+        "Self-winding Unico movement",
+        "Automatic winding movement",
+        "Skeleton tourbillon manual-winding movement"
+        ],
+        index=None,
+        placeholder="Choose from the list below...",
+   )
 
-    if st.button("Generate Text"):
+    if movement and st.button("Generate Text"):
+        st.write("You selected:", movement)
         if st.session_state['ambassador'] and st.session_state['theme']:
             # Step 2: Process the inputs and generate text
-            prompt = generate_prompt(st.session_state['ambassador'], st.session_state['theme'])
+            prompt = generate_prompt(st.session_state['ambassador'], st.session_state['theme'], movement=movement)
             #Simulate gemini.generate_content for test
             output = ast.literal_eval(gemini.generate_content([prompt]).text)
 
@@ -175,16 +220,26 @@ def main():
             num_images = st.slider("Choose the number of images to generate:", min_value=1, max_value=10, value=2)
             with st.spinner('Generating images...'):
                 st.session_state['images'] = [generate_images(st.session_state['edited_text'], seed=i) for i in range(num_images)] #Use edited text
+                
+        with open(f"streamlit/{st.session_state['ambassador']}_{st.session_state['theme']}.txt", "w") as f:
+            f.write(st.session_state['edited_text'])
+            f.close()
 
         if st.session_state['images']: #Only execute after validation
             st.write("Final Text:")
             st.write(st.session_state['edited_text'])
+            
+            st.session_state['images'].append(imagen3(prompt=st.session_state['edited_text'])[0])
 
-            # Step 3: Return 3 images in a row
-            cols = st.columns(num_images)
+            # Step 3: Return images in a row
+            cols = st.columns(num_images + 1)
             for i, col in enumerate(cols):
                 with col:
-                    st.image(st.session_state['images'][i], caption=f"Example {i+1}", use_column_width=True)
+                    caption = f"Example {i+1}"
+                    if i==2:
+                        caption="imagen3"
+                    st.image(st.session_state['images'][i], caption=caption, use_column_width=True)
+                    st.session_state['images'][i].save(f"streamlit/{st.session_state['ambassador']}_{st.session_state['theme']}_{caption}.jpg")
 
             st.write("Explainations:")
             st.write(st.session_state['symbolic'])
