@@ -16,6 +16,7 @@ from google import genai
 from google.genai import types
 from io import BytesIO
 import os 
+from utils import combine_images_horizontally
 
 lora_model = "output/models/checkpoint-4500"
 
@@ -110,7 +111,7 @@ def generate_prompt(ambassador, theme, movement):
     prompt = f"""
 
     Imagine an original visual brief for the next Hublot limited edition watch in collaboration with {ambassador} as part of a {theme} partnership.
-    A limited edition watch in Hublot's collaboration refers to a uniquely designed timepiece featuring exclusive materials or designs and representing and embody the essence and identity of the collaborating entity.
+    A limited edition watch in Hublot's collaboration refers to a uniquely designed timepiece featuring exclusive materials or designs and representing and embodying the essence and identity of the collaborating entity (ambassador/theme).
     
     These are the elements that are expected and absolutely necessary.
     
@@ -219,9 +220,9 @@ def main():
         if st.button("Validate Text") :
             num_images = st.slider("Choose the number of images to generate:", min_value=1, max_value=10, value=2)
             with st.spinner('Generating images...'):
-                st.session_state['images'] = [generate_images(st.session_state['edited_text'], seed=i) for i in range(num_images)] #Use edited text
+                st.session_state['images'] = [generate_images(st.session_state['edited_text'], seed=42+i) for i in range(num_images)] #Use edited text
                 
-        with open(f"streamlit/{st.session_state['ambassador']}_{st.session_state['theme']}.txt", "w") as f:
+        with open(f"streamlit_app/{st.session_state['ambassador']}_{st.session_state['theme']}.txt", "w") as f:
             f.write(st.session_state['edited_text'])
             f.close()
 
@@ -229,17 +230,20 @@ def main():
             st.write("Final Text:")
             st.write(st.session_state['edited_text'])
             
-            st.session_state['images'].append(imagen3(prompt=st.session_state['edited_text'])[0])
+            #st.session_state['images'].append(imagen3(prompt=st.session_state['edited_text'])[0])
 
             # Step 3: Return images in a row
-            cols = st.columns(num_images + 1)
+            cols = st.columns(num_images)
             for i, col in enumerate(cols):
                 with col:
                     caption = f"Example {i+1}"
                     if i==2:
                         caption="imagen3"
                     st.image(st.session_state['images'][i], caption=caption, use_column_width=True)
-                    st.session_state['images'][i].save(f"streamlit/{st.session_state['ambassador']}_{st.session_state['theme']}_{caption}.jpg")
+                    st.session_state['images'][i].save(f"streamlit_app/{st.session_state['ambassador']}_{st.session_state['theme']}_{caption}.jpg")
+                    
+            #combine_images_horizontally(st.session_state['images'], f"streamlit_app/{st.session_state['ambassador']}_{st.session_state['theme']}_combined.jpg",
+            #                            ["Example 1", "Example 2", "Imagen 3"])
 
             st.write("Explainations:")
             st.write(st.session_state['symbolic'])
