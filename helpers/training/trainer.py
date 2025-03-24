@@ -1478,6 +1478,7 @@ class Trainer:
 
             self.evaluation = Evaluation(accelerator=self.accelerator)
         model_evaluator = ModelEvaluator.from_config(args=self.config)
+        print("validation prompts:", self.validation_prompts)
         self.validation = Validation(
             trainable_parameters=self._get_trainable_parameters,
             accelerator=self.accelerator,

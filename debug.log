@@ -1,87 +1,107 @@
-2025-03-21 13:56:01,835 [INFO] (SimpleTuner) Using json configuration backend.
-2025-03-21 13:56:01,835 [INFO] (SimpleTuner) [CONFIG.JSON] Loaded configuration from config/config.json
-2025-03-21 13:56:01,835 [WARNING] (SimpleTuner) Skipping false argument: --disable_benchmark
-2025-03-21 13:56:01,835 [WARNING] (SimpleTuner) Skipping false argument: --validation_torch_compile
-2025-03-21 13:56:01,843 [WARNING] (ArgsParser) The VAE model madebyollin/sdxl-vae-fp16-fix is not compatible. Please use a compatible VAE to eliminate this warning. The baked-in VAE will be used, instead.
-2025-03-21 13:56:01,843 [INFO] (ArgsParser) VAE Model: black-forest-labs/FLUX.1-dev
-2025-03-21 13:56:01,843 [INFO] (ArgsParser) Default VAE Cache location: 
-2025-03-21 13:56:01,843 [INFO] (ArgsParser) Text Cache location: cache
-2025-03-21 13:56:01,843 [WARNING] (ArgsParser) Updating T5 XXL tokeniser max length to 512 for Flux.
-2025-03-21 13:56:01,843 [INFO] (ArgsParser) Enabled NVIDIA TF32 for faster training on Ampere GPUs. Use --disable_tf32 if this causes any problems.
-2025-03-21 13:56:02,723 [INFO] (SimpleTuner) Load VAE: black-forest-labs/FLUX.1-dev
-2025-03-21 13:56:04,131 [INFO] (SimpleTuner) Loading VAE onto accelerator, converting from torch.float32 to torch.bfloat16
-2025-03-21 13:56:04,483 [INFO] (SimpleTuner) Load tokenizers
-2025-03-21 13:56:08,626 [INFO] (helpers.training.text_encoding) Loading OpenAI CLIP-L text encoder from black-forest-labs/FLUX.1-dev/text_encoder..
-2025-03-21 13:56:10,193 [INFO] (helpers.training.text_encoding) Loading T5 XXL v1.1 text encoder from black-forest-labs/FLUX.1-dev/text_encoder_2..
-2025-03-21 13:56:59,782 [INFO] (SimpleTuner) Moving text encoder to GPU.
-2025-03-21 13:56:59,868 [INFO] (SimpleTuner) Moving text encoder 2 to GPU.
-2025-03-21 13:57:02,515 [INFO] (DataBackendFactory) Loading data backend config from config/multidatabackend.json
-2025-03-21 13:57:02,515 [INFO] (DataBackendFactory) Configuring text embed backend: text-embed-cache
-2025-03-21 13:57:02,883 [INFO] (TextEmbeddingCache) (Rank: 0) (id=text-embed-cache) Listing all text embed cache entries
-2025-03-21 13:57:02,888 [INFO] (DataBackendFactory) Pre-computing null embedding
-2025-03-21 13:57:02,889 [WARNING] (DataBackendFactory) Not using caption dropout will potentially lead to overfitting on captions, eg. CFG will not work very well. Set --caption_dropout_probability=0.1 as a recommended value.
-2025-03-21 13:57:02,889 [INFO] (DataBackendFactory) Completed loading text embed services.
-2025-03-21 13:57:02,889 [INFO] (DataBackendFactory) Configuring data backend: classic-fusion-768
-2025-03-21 13:57:02,890 [INFO] (DataBackendFactory) (id=classic-fusion-768) Loading bucket manager.
-2025-03-21 13:57:02,891 [INFO] (DataBackendFactory) (id=classic-fusion-768) Refreshing aspect buckets on main process.
-2025-03-21 13:57:02,892 [INFO] (BaseMetadataBackend) Discovering new files...
-2025-03-21 13:57:02,938 [INFO] (BaseMetadataBackend) Compressed 875 existing files from 5.
-2025-03-21 13:57:02,938 [INFO] (BaseMetadataBackend) No new files discovered. Doing nothing.
-2025-03-21 13:57:02,938 [INFO] (BaseMetadataBackend) Statistics: {'total_processed': 0, 'skipped': {'already_exists': 875, 'metadata_missing': 0, 'not_found': 0, 'too_small': 0, 'other': 0}}
-2025-03-21 13:57:03,249 [WARNING] (DataBackendFactory) Key crop_aspect not found in the current backend config, using the existing value 'square'.
-2025-03-21 13:57:03,250 [WARNING] (DataBackendFactory) Key crop_style not found in the current backend config, using the existing value 'random'.
-2025-03-21 13:57:03,250 [WARNING] (DataBackendFactory) Key disable_validation not found in the current backend config, using the existing value 'False'.
-2025-03-21 13:57:03,250 [INFO] (DataBackendFactory) Configured backend: {'id': 'classic-fusion-768', 'config': {'repeats': 10, 'crop': False, 'crop_aspect': 'square', 'crop_style': 'random', 'disable_validation': False, 'resolution': 0.589824, 'resolution_type': 'area', 'caption_strategy': 'textfile', 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'maximum_image_size': None, 'target_downsample_size': None, 'config_version': 1}, 'dataset_type': 'image', 'data_backend': <helpers.data_backend.local.LocalDataBackend object at 0x7f39f8b82500>, 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'metadata_backend': <helpers.metadata.backends.discovery.DiscoveryMetadataBackend object at 0x7f39f8b82530>}
-2025-03-21 13:57:03,251 [INFO] (DataBackendFactory) (id=classic-fusion-768) Collecting captions.
-2025-03-21 13:57:03,271 [INFO] (DataBackendFactory) (id=classic-fusion-768) Initialise text embed pre-computation using the textfile caption strategy. We have 875 captions to process.
-2025-03-21 13:58:06,421 [INFO] (DataBackendFactory) (id=classic-fusion-768) Completed processing 875 captions.
-2025-03-21 13:58:06,422 [INFO] (DataBackendFactory) (id=classic-fusion-768) Creating VAE latent cache.
-2025-03-21 13:58:06,422 [INFO] (LocalDataBackend) Directory created: /home/GANA/nour-genai-product-design-simpletuner/cache/flux/vae/768
-2025-03-21 13:58:06,426 [INFO] (DataBackendFactory) (id=classic-fusion-768) Discovering cache objects..
-2025-03-21 13:58:57,458 [INFO] (DataBackendFactory) Configured backend: {'id': 'classic-fusion-768', 'config': {'repeats': 10, 'crop': False, 'crop_aspect': 'square', 'crop_style': 'random', 'disable_validation': False, 'resolution': 0.589824, 'resolution_type': 'area', 'caption_strategy': 'textfile', 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'maximum_image_size': None, 'target_downsample_size': None, 'config_version': 1, 'hash_filenames': True}, 'dataset_type': 'image', 'data_backend': <helpers.data_backend.local.LocalDataBackend object at 0x7f39f8b82500>, 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'metadata_backend': <helpers.metadata.backends.discovery.DiscoveryMetadataBackend object at 0x7f39f8b82530>, 'train_dataset': <helpers.multiaspect.dataset.MultiAspectDataset object at 0x7f39f899cfd0>, 'sampler': <helpers.multiaspect.sampler.MultiAspectSampler object at 0x7f39faaa26b0>, 'train_dataloader': <torch.utils.data.dataloader.DataLoader object at 0x7f39faaa2c80>, 'text_embed_cache': <helpers.caching.text_embeds.TextEmbeddingCache object at 0x7f3a4a1823b0>, 'vaecache': <helpers.caching.vae.VAECache object at 0x7f39f899ecb0>}
-2025-03-21 13:58:57,463 [INFO] (DataBackendFactory) Configuring data backend: classic-fusion-crop-768
-2025-03-21 13:58:57,463 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Loading bucket manager.
-2025-03-21 13:58:57,464 [WARNING] (DiscoveryMetadataBackend) No cache file found, creating new one.
-2025-03-21 13:58:57,464 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Refreshing aspect buckets on main process.
-2025-03-21 13:58:57,464 [INFO] (BaseMetadataBackend) Discovering new files...
-2025-03-21 13:58:57,509 [INFO] (BaseMetadataBackend) Compressed 0 existing files from 0.
-2025-03-21 13:59:03,922 [INFO] (BaseMetadataBackend) Image processing statistics: {'total_processed': 875, 'skipped': {'already_exists': 0, 'metadata_missing': 0, 'not_found': 0, 'too_small': 0, 'other': 0}}
-2025-03-21 13:59:03,932 [INFO] (BaseMetadataBackend) Enforcing minimum image size of 0.262144. This could take a while for very-large datasets.
-2025-03-21 13:59:03,939 [INFO] (BaseMetadataBackend) Completed aspect bucket update.
-2025-03-21 13:59:03,947 [INFO] (DataBackendFactory) Configured backend: {'id': 'classic-fusion-crop-768', 'config': {'vae_cache_clear_each_epoch': False, 'repeats': 10, 'crop': True, 'crop_aspect': 'square', 'crop_aspect_buckets': None, 'crop_style': 'center', 'disable_validation': False, 'resolution': 0.589824, 'resolution_type': 'area', 'caption_strategy': 'textfile', 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'maximum_image_size': None, 'target_downsample_size': None, 'config_version': 2}, 'dataset_type': 'image', 'data_backend': <helpers.data_backend.local.LocalDataBackend object at 0x7f39f8fa29e0>, 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'metadata_backend': <helpers.metadata.backends.discovery.DiscoveryMetadataBackend object at 0x7f39fc006fe0>}
-2025-03-21 13:59:03,948 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Collecting captions.
-2025-03-21 13:59:03,962 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Initialise text embed pre-computation using the textfile caption strategy. We have 875 captions to process.
-2025-03-21 14:00:07,745 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Completed processing 875 captions.
-2025-03-21 14:00:07,746 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Creating VAE latent cache.
-2025-03-21 14:00:07,746 [INFO] (LocalDataBackend) Directory created: /home/GANA/nour-genai-product-design-simpletuner/cache/flux/vae-crop/768
-2025-03-21 14:00:07,751 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Discovering cache objects..
-2025-03-21 14:00:53,492 [INFO] (DataBackendFactory) Configured backend: {'id': 'classic-fusion-crop-768', 'config': {'vae_cache_clear_each_epoch': False, 'repeats': 10, 'crop': True, 'crop_aspect': 'square', 'crop_aspect_buckets': None, 'crop_style': 'center', 'disable_validation': False, 'resolution': 0.589824, 'resolution_type': 'area', 'caption_strategy': 'textfile', 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'maximum_image_size': None, 'target_downsample_size': None, 'config_version': 2, 'hash_filenames': True}, 'dataset_type': 'image', 'data_backend': <helpers.data_backend.local.LocalDataBackend object at 0x7f39f8fa29e0>, 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'metadata_backend': <helpers.metadata.backends.discovery.DiscoveryMetadataBackend object at 0x7f39fc006fe0>, 'train_dataset': <helpers.multiaspect.dataset.MultiAspectDataset object at 0x7f39eadd0340>, 'sampler': <helpers.multiaspect.sampler.MultiAspectSampler object at 0x7f39eadd1d80>, 'train_dataloader': <torch.utils.data.dataloader.DataLoader object at 0x7f39dddeb5e0>, 'text_embed_cache': <helpers.caching.text_embeds.TextEmbeddingCache object at 0x7f3a4a1823b0>, 'vaecache': <helpers.caching.vae.VAECache object at 0x7f39faaa2d70>}
-2025-03-21 14:00:53,567 [INFO] (validation) Precomputing the negative prompt embed for validations.
-2025-03-21 14:00:53,738 [INFO] (SimpleTuner) Calculated our maximum training steps at 10000 because we have 1 epochs and 19250 steps per epoch.
-2025-03-21 14:00:53,738 [INFO] (SimpleTuner) Collected the following data backends: ['text-embed-cache', 'classic-fusion-768', 'classic-fusion-crop-768']
-2025-03-21 14:00:53,739 [INFO] (SimpleTuner) Unloading text encoders, as they are not being trained.
-2025-03-21 14:00:58,200 [INFO] (SimpleTuner) After nuking text encoders from orbit, we freed 9.34 GB of VRAM. The real memories were the friends we trained a model on along the way.
-2025-03-21 14:00:58,479 [INFO] (SimpleTuner) After nuking the VAE from orbit, we freed 163.84 MB of VRAM.
-2025-03-21 14:02:06,545 [INFO] (SimpleTuner) Moving transformer to dtype=torch.bfloat16, device=cuda
-2025-03-21 14:02:13,198 [INFO] (helpers.training.quantisation) Quantising FluxTransformer2DModelWithMasking. Using int8-quanto.
-2025-03-21 14:02:13,198 [INFO] (helpers.training.quantisation) Freezing model weights only
-2025-03-21 14:02:13,916 [INFO] (SimpleTuner) Using LoRA training mode (rank=16)
-2025-03-21 14:02:14,748 [INFO] (SimpleTuner) Moving transformer to dtype=torch.bfloat16, device=cuda
-2025-03-21 14:02:14,865 [INFO] (SimpleTuner) Moving the diffusion transformer to GPU in int8-quanto precision.
-2025-03-21 14:02:14,986 [INFO] (SimpleTuner) Benchmarking base model for comparison. Supply `--disable_benchmark: true` to disable this behaviour.
-2025-03-21 14:02:15,090 [INFO] (root) gcc -pthread -B /opt/conda/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /opt/conda/include -fPIC -O2 -isystem /opt/conda/include -fPIC -c /var/tmp/tmpkx09_7tk/test.c -o /var/tmp/tmpkx09_7tk/test.o
-2025-03-21 14:02:15,148 [INFO] (root) gcc -pthread -B /opt/conda/compiler_compat /var/tmp/tmpkx09_7tk/test.o -laio -o /var/tmp/tmpkx09_7tk/a.out
-2025-03-21 14:02:15,158 [INFO] (root) gcc -pthread -B /opt/conda/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /opt/conda/include -fPIC -O2 -isystem /opt/conda/include -fPIC -c /var/tmp/tmpx4e1nxuz/test.c -o /var/tmp/tmpx4e1nxuz/test.o
-2025-03-21 14:02:15,294 [INFO] (root) gcc -pthread -B /opt/conda/compiler_compat /var/tmp/tmpx4e1nxuz/test.o -L/usr/local/cuda -L/usr/local/cuda/lib64 -lcufile -o /var/tmp/tmpx4e1nxuz/a.out
-2025-03-21 14:02:35,008 [INFO] (SimpleTuner) Learning rate: 0.0001
-2025-03-21 14:02:35,008 [INFO] (helpers.training.optimizer_param) cls: <class 'helpers.training.optimizers.adamw_bfloat16.AdamWBF16'>, settings: {'betas': (0.9, 0.999), 'weight_decay': 0.01, 'eps': 1e-06}
-2025-03-21 14:02:35,019 [INFO] (SimpleTuner) Optimizer arguments={'lr': 0.0001, 'betas': (0.9, 0.999), 'weight_decay': 0.01, 'eps': 1e-06}
-2025-03-21 14:02:35,020 [INFO] (SimpleTuner) Loading polynomial learning rate scheduler with 100 warmup steps
-2025-03-21 14:02:35,020 [INFO] (SimpleTuner) Using Polynomial learning rate scheduler with last epoch -2.
-2025-03-21 14:02:35,024 [INFO] (SimpleTuner) Preparing models..
-2025-03-21 14:02:35,024 [INFO] (SimpleTuner) Loading our accelerator...
-2025-03-21 14:02:35,187 [INFO] (SimpleTuner) Checkpoint 'latest' does not exist. Starting a new training run.
-2025-03-21 14:02:35,204 [INFO] (SimpleTuner) 
+2025-03-24 06:16:51,636 [INFO] (SimpleTuner) Using json configuration backend.
+2025-03-24 06:16:51,637 [INFO] (SimpleTuner) [CONFIG.JSON] Loaded configuration from config/config.json
+2025-03-24 06:16:51,637 [WARNING] (SimpleTuner) Skipping false argument: --disable_benchmark
+2025-03-24 06:16:51,637 [WARNING] (SimpleTuner) Skipping false argument: --validation_torch_compile
+2025-03-24 06:16:51,644 [WARNING] (ArgsParser) The VAE model madebyollin/sdxl-vae-fp16-fix is not compatible. Please use a compatible VAE to eliminate this warning. The baked-in VAE will be used, instead.
+2025-03-24 06:16:51,644 [INFO] (ArgsParser) VAE Model: black-forest-labs/FLUX.1-dev
+2025-03-24 06:16:51,644 [INFO] (ArgsParser) Default VAE Cache location: 
+2025-03-24 06:16:51,644 [INFO] (ArgsParser) Text Cache location: cache
+2025-03-24 06:16:51,644 [WARNING] (ArgsParser) Updating T5 XXL tokeniser max length to 512 for Flux.
+2025-03-24 06:16:51,645 [INFO] (ArgsParser) Enabled NVIDIA TF32 for faster training on Ampere GPUs. Use --disable_tf32 if this causes any problems.
+2025-03-24 06:16:51,959 [INFO] (SimpleTuner) Load VAE: black-forest-labs/FLUX.1-dev
+2025-03-24 06:16:53,153 [INFO] (SimpleTuner) Loading VAE onto accelerator, converting from torch.float32 to torch.bfloat16
+2025-03-24 06:16:53,554 [INFO] (SimpleTuner) Load tokenizers
+2025-03-24 06:16:54,373 [INFO] (helpers.training.text_encoding) Loading OpenAI CLIP-L text encoder from black-forest-labs/FLUX.1-dev/text_encoder..
+2025-03-24 06:16:54,805 [INFO] (helpers.training.text_encoding) Loading T5 XXL v1.1 text encoder from black-forest-labs/FLUX.1-dev/text_encoder_2..
+2025-03-24 06:17:00,490 [INFO] (SimpleTuner) Moving text encoder to GPU.
+2025-03-24 06:17:01,666 [INFO] (SimpleTuner) Moving text encoder 2 to GPU.
+2025-03-24 06:17:55,572 [INFO] (DataBackendFactory) Loading data backend config from config/multidatabackend.json
+2025-03-24 06:17:55,574 [INFO] (DataBackendFactory) Configuring text embed backend: text-embed-cache
+2025-03-24 06:17:55,798 [INFO] (TextEmbeddingCache) (Rank: 0) (id=text-embed-cache) Listing all text embed cache entries
+2025-03-24 06:17:55,817 [INFO] (DataBackendFactory) Pre-computing null embedding
+2025-03-24 06:17:55,818 [WARNING] (DataBackendFactory) Not using caption dropout will potentially lead to overfitting on captions, eg. CFG will not work very well. Set --caption_dropout_probability=0.1 as a recommended value.
+2025-03-24 06:17:55,818 [INFO] (DataBackendFactory) Completed loading text embed services.
+2025-03-24 06:17:55,818 [INFO] (DataBackendFactory) Configuring data backend: classic-fusion-768
+2025-03-24 06:17:55,819 [INFO] (DataBackendFactory) (id=classic-fusion-768) Loading bucket manager.
+2025-03-24 06:17:55,822 [INFO] (DataBackendFactory) (id=classic-fusion-768) Refreshing aspect buckets on main process.
+2025-03-24 06:17:55,822 [INFO] (BaseMetadataBackend) Discovering new files...
+2025-03-24 06:17:55,868 [INFO] (BaseMetadataBackend) Compressed 875 existing files from 5.
+2025-03-24 06:17:55,868 [INFO] (BaseMetadataBackend) No new files discovered. Doing nothing.
+2025-03-24 06:17:55,868 [INFO] (BaseMetadataBackend) Statistics: {'total_processed': 0, 'skipped': {'already_exists': 875, 'metadata_missing': 0, 'not_found': 0, 'too_small': 0, 'other': 0}}
+2025-03-24 06:17:55,879 [WARNING] (DataBackendFactory) Key crop_aspect not found in the current backend config, using the existing value 'square'.
+2025-03-24 06:17:55,879 [WARNING] (DataBackendFactory) Key crop_style not found in the current backend config, using the existing value 'random'.
+2025-03-24 06:17:55,879 [WARNING] (DataBackendFactory) Key disable_validation not found in the current backend config, using the existing value 'False'.
+2025-03-24 06:17:55,879 [WARNING] (DataBackendFactory) Key config_version not found in the current backend config, using the existing value '1'.
+2025-03-24 06:17:55,879 [WARNING] (DataBackendFactory) Key hash_filenames not found in the current backend config, using the existing value 'True'.
+2025-03-24 06:17:55,879 [INFO] (DataBackendFactory) Configured backend: {'id': 'classic-fusion-768', 'config': {'repeats': 10, 'crop': False, 'crop_aspect': 'square', 'crop_style': 'random', 'disable_validation': False, 'resolution': 0.589824, 'resolution_type': 'area', 'caption_strategy': 'textfile', 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'maximum_image_size': None, 'target_downsample_size': None, 'config_version': 1, 'hash_filenames': True}, 'dataset_type': 'image', 'data_backend': <helpers.data_backend.local.LocalDataBackend object at 0x7f75aa393d00>, 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'metadata_backend': <helpers.metadata.backends.discovery.DiscoveryMetadataBackend object at 0x7f75aa392050>}
+2025-03-24 06:17:55,881 [INFO] (DataBackendFactory) (id=classic-fusion-768) Collecting captions.
+2025-03-24 06:17:56,260 [INFO] (DataBackendFactory) (id=classic-fusion-768) Initialise text embed pre-computation using the textfile caption strategy. We have 875 captions to process.
+2025-03-24 06:17:56,284 [INFO] (DataBackendFactory) (id=classic-fusion-768) Completed processing 875 captions.
+2025-03-24 06:17:56,284 [INFO] (DataBackendFactory) (id=classic-fusion-768) Creating VAE latent cache.
+2025-03-24 06:17:56,288 [INFO] (DataBackendFactory) (id=classic-fusion-768) Discovering cache objects..
+2025-03-24 06:17:56,326 [INFO] (DataBackendFactory) Configured backend: {'id': 'classic-fusion-768', 'config': {'repeats': 10, 'crop': False, 'crop_aspect': 'square', 'crop_style': 'random', 'disable_validation': False, 'resolution': 0.589824, 'resolution_type': 'area', 'caption_strategy': 'textfile', 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'maximum_image_size': None, 'target_downsample_size': None, 'config_version': 1, 'hash_filenames': True}, 'dataset_type': 'image', 'data_backend': <helpers.data_backend.local.LocalDataBackend object at 0x7f75aa393d00>, 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'metadata_backend': <helpers.metadata.backends.discovery.DiscoveryMetadataBackend object at 0x7f75aa392050>, 'train_dataset': <helpers.multiaspect.dataset.MultiAspectDataset object at 0x7f75aa2c5db0>, 'sampler': <helpers.multiaspect.sampler.MultiAspectSampler object at 0x7f75aa2c56c0>, 'train_dataloader': <torch.utils.data.dataloader.DataLoader object at 0x7f75aa2c5fc0>, 'text_embed_cache': <helpers.caching.text_embeds.TextEmbeddingCache object at 0x7f75a8107820>, 'vaecache': <helpers.caching.vae.VAECache object at 0x7f75aa392110>}
+2025-03-24 06:17:56,333 [INFO] (DataBackendFactory) Configuring data backend: classic-fusion-crop-768
+2025-03-24 06:17:56,334 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Loading bucket manager.
+2025-03-24 06:17:56,335 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Refreshing aspect buckets on main process.
+2025-03-24 06:17:56,335 [INFO] (BaseMetadataBackend) Discovering new files...
+2025-03-24 06:17:56,383 [INFO] (BaseMetadataBackend) Compressed 875 existing files from 1.
+2025-03-24 06:17:56,383 [INFO] (BaseMetadataBackend) No new files discovered. Doing nothing.
+2025-03-24 06:17:56,383 [INFO] (BaseMetadataBackend) Statistics: {'total_processed': 0, 'skipped': {'already_exists': 875, 'metadata_missing': 0, 'not_found': 0, 'too_small': 0, 'other': 0}}
+2025-03-24 06:17:56,390 [WARNING] (DataBackendFactory) Key crop_aspect_buckets not found in the current backend config, using the existing value 'None'.
+2025-03-24 06:17:56,390 [WARNING] (DataBackendFactory) Key disable_validation not found in the current backend config, using the existing value 'False'.
+2025-03-24 06:17:56,390 [WARNING] (DataBackendFactory) Key config_version not found in the current backend config, using the existing value '2'.
+2025-03-24 06:17:56,391 [WARNING] (DataBackendFactory) Key hash_filenames not found in the current backend config, using the existing value 'True'.
+2025-03-24 06:17:56,391 [INFO] (DataBackendFactory) Configured backend: {'id': 'classic-fusion-crop-768', 'config': {'vae_cache_clear_each_epoch': False, 'repeats': 10, 'crop': True, 'crop_aspect': 'square', 'crop_aspect_buckets': None, 'crop_style': 'center', 'disable_validation': False, 'resolution': 0.589824, 'resolution_type': 'area', 'caption_strategy': 'textfile', 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'maximum_image_size': None, 'target_downsample_size': None, 'config_version': 2, 'hash_filenames': True}, 'dataset_type': 'image', 'data_backend': <helpers.data_backend.local.LocalDataBackend object at 0x7f7591d58220>, 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'metadata_backend': <helpers.metadata.backends.discovery.DiscoveryMetadataBackend object at 0x7f7591d59960>}
+2025-03-24 06:17:56,392 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Collecting captions.
+2025-03-24 06:17:56,406 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Initialise text embed pre-computation using the textfile caption strategy. We have 875 captions to process.
+2025-03-24 06:17:56,426 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Completed processing 875 captions.
+2025-03-24 06:17:56,426 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Creating VAE latent cache.
+2025-03-24 06:17:56,431 [INFO] (DataBackendFactory) (id=classic-fusion-crop-768) Discovering cache objects..
+2025-03-24 06:17:56,467 [INFO] (DataBackendFactory) Configured backend: {'id': 'classic-fusion-crop-768', 'config': {'vae_cache_clear_each_epoch': False, 'repeats': 10, 'crop': True, 'crop_aspect': 'square', 'crop_aspect_buckets': None, 'crop_style': 'center', 'disable_validation': False, 'resolution': 0.589824, 'resolution_type': 'area', 'caption_strategy': 'textfile', 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'maximum_image_size': None, 'target_downsample_size': None, 'config_version': 2, 'hash_filenames': True}, 'dataset_type': 'image', 'data_backend': <helpers.data_backend.local.LocalDataBackend object at 0x7f7591d58220>, 'instance_data_dir': '/home/GANA/nour-genai-product-design-simpletuner/datasets/classic_fusion', 'metadata_backend': <helpers.metadata.backends.discovery.DiscoveryMetadataBackend object at 0x7f7591d59960>, 'train_dataset': <helpers.multiaspect.dataset.MultiAspectDataset object at 0x7f7591d394e0>, 'sampler': <helpers.multiaspect.sampler.MultiAspectSampler object at 0x7f7591d391e0>, 'train_dataloader': <torch.utils.data.dataloader.DataLoader object at 0x7f7591d3b100>, 'text_embed_cache': <helpers.caching.text_embeds.TextEmbeddingCache object at 0x7f75a8107820>, 'vaecache': <helpers.caching.vae.VAECache object at 0x7f7591d2a1a0>}
+2025-03-24 06:17:57,441 [INFO] (validation) Precomputing the negative prompt embed for validations.
+2025-03-24 06:17:57,619 [INFO] (SimpleTuner) Calculated our maximum training steps at 10000 because we have 1 epochs and 19250 steps per epoch.
+2025-03-24 06:17:57,620 [INFO] (SimpleTuner) Collected the following data backends: ['text-embed-cache', 'classic-fusion-768', 'classic-fusion-crop-768']
+2025-03-24 06:17:57,620 [INFO] (SimpleTuner) Unloading text encoders, as they are not being trained.
+2025-03-24 06:18:02,069 [INFO] (SimpleTuner) After nuking text encoders from orbit, we freed 9.11 GB of VRAM. The real memories were the friends we trained a model on along the way.
+2025-03-24 06:18:02,331 [INFO] (SimpleTuner) After nuking the VAE from orbit, we freed 163.84 MB of VRAM.
+2025-03-24 06:18:04,479 [INFO] (SimpleTuner) Moving transformer to dtype=torch.bfloat16, device=cuda
+2025-03-24 06:20:18,936 [INFO] (helpers.training.quantisation) Quantising FluxTransformer2DModelWithMasking. Using int8-quanto.
+2025-03-24 06:20:18,936 [INFO] (helpers.training.quantisation) Freezing model weights only
+2025-03-24 06:20:19,635 [INFO] (SimpleTuner) Using LoRA training mode (rank=16)
+2025-03-24 06:20:20,298 [INFO] (SimpleTuner) Moving transformer to dtype=torch.bfloat16, device=cuda
+2025-03-24 06:20:20,413 [INFO] (SimpleTuner) Moving the diffusion transformer to GPU in int8-quanto precision.
+2025-03-24 06:20:20,531 [INFO] (SimpleTuner) Learning rate: 0.0001
+2025-03-24 06:20:20,531 [INFO] (helpers.training.optimizer_param) cls: <class 'helpers.training.optimizers.adamw_bfloat16.AdamWBF16'>, settings: {'betas': (0.9, 0.999), 'weight_decay': 0.01, 'eps': 1e-06}
+2025-03-24 06:20:20,542 [INFO] (SimpleTuner) Optimizer arguments={'lr': 0.0001, 'betas': (0.9, 0.999), 'weight_decay': 0.01, 'eps': 1e-06}
+2025-03-24 06:20:20,543 [INFO] (SimpleTuner) Loading polynomial learning rate scheduler with 100 warmup steps
+2025-03-24 06:20:20,543 [INFO] (SimpleTuner) Using Polynomial learning rate scheduler with last epoch -2.
+2025-03-24 06:20:20,548 [INFO] (SimpleTuner) Preparing models..
+2025-03-24 06:20:20,548 [INFO] (SimpleTuner) Loading our accelerator...
+2025-03-24 06:20:20,705 [INFO] (SimpleTuner) Resuming from checkpoint checkpoint-4000
+2025-03-24 06:20:20,941 [INFO] (root) gcc -pthread -B /opt/conda/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /opt/conda/include -fPIC -O2 -isystem /opt/conda/include -fPIC -c /var/tmp/tmp2vmjd32c/test.c -o /var/tmp/tmp2vmjd32c/test.o
+2025-03-24 06:20:21,097 [INFO] (root) gcc -pthread -B /opt/conda/compiler_compat /var/tmp/tmp2vmjd32c/test.o -laio -o /var/tmp/tmp2vmjd32c/a.out
+2025-03-24 06:20:21,146 [INFO] (root) gcc -pthread -B /opt/conda/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /opt/conda/include -fPIC -O2 -isystem /opt/conda/include -fPIC -c /var/tmp/tmp5ablagdp/test.c -o /var/tmp/tmp5ablagdp/test.o
+2025-03-24 06:20:21,165 [INFO] (root) gcc -pthread -B /opt/conda/compiler_compat /var/tmp/tmp5ablagdp/test.o -L/usr/local/cuda -L/usr/local/cuda/lib64 -lcufile -o /var/tmp/tmp5ablagdp/a.out
+2025-03-24 06:20:23,299 [INFO] (MultiAspectSampler-classic-fusion-768) Previous checkpoint had 2 exhausted buckets.
+2025-03-24 06:20:23,299 [INFO] (MultiAspectSampler-classic-fusion-768) Previous checkpoint was on epoch 3.
+2025-03-24 06:20:23,299 [INFO] (MultiAspectSampler-classic-fusion-768) Previous checkpoint had 277 seen images.
+2025-03-24 06:20:23,301 [INFO] (MultiAspectSampler-classic-fusion-crop-768) Previous checkpoint had 0 exhausted buckets.
+2025-03-24 06:20:23,301 [INFO] (MultiAspectSampler-classic-fusion-crop-768) Previous checkpoint was on epoch 3.
+2025-03-24 06:20:23,301 [INFO] (MultiAspectSampler-classic-fusion-crop-768) Previous checkpoint had 223 seen images.
+2025-03-24 06:20:23,301 [INFO] (SimpleTuner) Resuming from global_step 4000.
+2025-03-24 06:20:23,302 [INFO] (MultiAspectSampler-classic-fusion-768) 
+(Rank: 0)     -> Number of seen images: 277
+(Rank: 0)     -> Number of unseen images: 598
+(Rank: 0)     -> Current Bucket: None
+(Rank: 0)     -> 5 Buckets: ['0.56', '0.71', '0.67', '0.6', '0.79']
+(Rank: 0)     -> 2 Exhausted Buckets: ['0.79', '0.6']
+2025-03-24 06:20:23,303 [INFO] (MultiAspectSampler-classic-fusion-crop-768) 
+(Rank: 0)     -> Number of seen images: 223
+(Rank: 0)     -> Number of unseen images: 652
+(Rank: 0)     -> Current Bucket: None
+(Rank: 0)     -> 1 Buckets: ['1.0']
+(Rank: 0)     -> 0 Exhausted Buckets: []
+2025-03-24 06:20:23,318 [INFO] (SimpleTuner) 
 ***** Running training *****
 -  Num batches = 19250
 -  Num Epochs = 1
@@ -90,4 +110,5 @@
   - Instantaneous batch size per device = 1
   - Gradient Accumulation steps = 1
 -  Total optimization steps = 10000
--  Total optimization steps remaining = 10000
+  - Steps completed: 4000
+-  Total optimization steps remaining = 6000
