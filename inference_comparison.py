@@ -2,75 +2,42 @@
 # This script will generate images for the same seed/prompt across many models and stitch the outputs together.
 ###
 
-from diffusers import AutoPipelineForText2Image
+from diffusers import FluxPipeline
 from torch import manual_seed, float16
 import os
 from PIL import Image, ImageDraw, ImageFont
-from helpers.prompts import prompts
+#from helpers.prompts import prompts
+
+prompts = {
+    "525.OX.0180.LR.0904": "Front view of a Hublot watch. Shiny King Gold case set with white diamonds and polished King Gold bezel set with baguette-cut white diamonds. Automatic chronograph movement. Black alligator strap. Sapphire dial, skeleton. Stick indexes. Stick hands.",
+    "507.CX.9004.RX.TAK23": "Front view of a Hublot watch. Satin-finished polished black ceramic case, satin-finished polished black ceramic bezel. Automatic Unico Manufacture movement. Lined black rubber strap. Dial paved with pink, yellow, blue, orange, violet and green sapphires, forming a smiling flower. Sword-type hands",
+    "541.NO.1180.LR": "Front view of a Hublot watch. Satin-finished polished titanium case with satin-finished polished King Gold titanium bezel. Automatic chronograph movement. Black alligator strap. Matte black dial. Golden baton indexes. Golden sword-shaped hands.', '568.NX.891L.NX.1204': 'Front view of a Hublot watch. Case in polished and satin-finished titanium and polished titanium bezel set with brilliant-cut white diamonds. Automatic movement. Polished and satin-finished titanium bracelet. Sunray blue dial. Baton indexes. Polished hands",
+    "568.NX.897M.NX.1204": "Front view of a Hublot watch. Case in polished and satin-finished titanium and bezel in polished titanium set with brilliant-cut white diamonds. Automatic movement. Polished and satin-finished titanium bracelet. Brown dial set with brilliant-cut white diamonds. Diamond indexes. Polished sword-shaped hands",
+    "505.CS.1270.VR": "Front view of a Hublot watch. Polished black ceramic case with polished black ceramic bezel. Skeleton tourbillon manual-winding manufacture movement. Glossy black calfskin strap. Glossy black dial. Black baguette diamond indexes. Polished sword-shaped hands",
+    "585.OX.898P.OX.1204": "Front view of a Hublot watch. Satin-finished and polished King Gold case with polished King Gold bezel set with brilliant white diamonds. Automatic movement. KING GOLD PINK DIAMONDS bracelet. Pink dial set with brilliant white diamonds. Diamond indexes. Polished sword-shaped hands.",
+    "542.OX.7180.RX": "Front view of a Hublot watch. Polished and satin-finished King Gold case and polished satin-finished King Gold bezel. Automatic movement. Blue lined rubber strap. Sunray blue dial. Stick indexes. Sword-shaped hands.', '511.OX.7180.LR': 'Front view of a Hublot watch. Case in polished and satin-finished King Gold with polished and satin-finished King Gold bezel. Automatic movement. ALL BLUE ALLIGATOR strap. Sunray blue dial. Stick indexes. Polished hands"
+
+}
 
 # Define your pipelines and settings in a list of dictionaries
 pipelines_info = [
     {
-        "label": "velocity-v1",
-        "pretrained_model": "ptx0/terminus-xl-velocity-v1",
+        "label": "base_flux",
+        "pretrained_model": "black-forest-labs/FLUX.1-dev",
         "settings": {
-            "guidance_scale": 8.0,
-            "guidance_rescale": 0.7,
-            "num_inference_steps": 30,
-            "negative_prompt": "blurry, cropped, ugly, upscaled",
+            "guidance_scale": 3.5,
+            #"guidance_rescale": 0.7,
+            "num_inference_steps": 25,
         },
     },
-    {
-        "label": "gamma-v1",
-        "pretrained_model": "ptx0/terminus-xl-gamma-v1",
-        "settings": {
-            "guidance_scale": 8.0,
-            "guidance_rescale": 0.7,
-            "num_inference_steps": 30,
-            "negative_prompt": "blurry, cropped, ugly, upscaled",
-        },
-    },
-    {
-        "label": "gamma-v2",
-        "pretrained_model": "ptx0/terminus-xl-gamma-v2",
-        "settings": {
-            "guidance_scale": 8.0,
-            "guidance_rescale": 0.7,
-            "num_inference_steps": 30,
-            "negative_prompt": "blurry, cropped, ugly, upscaled",
-        },
-    },
-    {
-        "label": "otaku-v1",
-        "pretrained_model": "ptx0/terminus-xl-otaku-v1",
-        "settings": {
-            "guidance_scale": 8.0,
-            "guidance_rescale": 0.7,
-            "num_inference_steps": 30,
-            "negative_prompt": "blurry, cropped, ugly, upscaled",
-        },
-    },
-    {
-        "label": "gamma-training",
-        "pretrained_model": "ptx0/terminus-xl-gamma-training",
-        "settings": {
-            "guidance_scale": 8.0,
-            "guidance_rescale": 0.7,
-            "num_inference_steps": 30,
-            "negative_prompt": "blurry, cropped, ugly, upscaled",
-        },
-    },
-    {
-        "label": "gamma-v2-1",
-        "pretrained_model": "ptx0/terminus-xl-gamma-v2-1",
-        "settings": {
-            "guidance_scale": 8.0,
-            "guidance_rescale": 0.7,
-            "num_inference_steps": 30,
-            "negative_prompt": "blurry, cropped, ugly, upscaled",
-        },
-    },
-    # {"label": "v2.1+LoRA", "pretrained_model": "ptx0/terminus-xl-gamma-v2-1", "lora": {"weights": "ptx0/simpletuner-lora-test", "weight_name": "pytorch_lora_weights.safetensors"}, "settings": {"guidance_scale": 8.0, "guidance_rescale": 0.7, "num_inference_steps": 30, "negative_prompt": "blurry, cropped, ugly, upscaled"}},
+    {"label": "lora_flux",
+     "pretrained_model": "black-forest-labs/FLUX.1-dev",
+     "lora": {"model": "output/models/checkpoint-4500"},
+     "settings": {"guidance_scale": 3.5, 
+                  #"guidance_rescale": 0.7,
+                  "num_inference_steps": 25, 
+                  }
+     }
 ]
 
 
@@ -106,41 +73,26 @@ def combine_and_label_images(images_info, output_path):
 
     combined_image.save(output_path)
 
-
-# Processing pipelines
-base_pipeline = AutoPipelineForText2Image.from_pretrained(
-    "ptx0/terminus-xl-gamma-v2", torch_dtype=float16
-).to("cuda")
-text_encoder_1 = base_pipeline.components["text_encoder"]
-text_encoder_2 = base_pipeline.components["text_encoder_2"]
-vae = base_pipeline.components["vae"]
 for shortname, prompt in prompts.items():
     print(f"Processing: {shortname}")
-    target_dir = f"inference/images/{shortname}"
-    # Does the combined image exist? Skip it then.
-    if os.path.exists(f"{target_dir}/combined_image.png"):
-        continue
+    target_dir = f"inference/images"
     os.makedirs(target_dir, exist_ok=True)
 
     images_info = []
     for pipeline_info in pipelines_info:
-        image_path = f'{target_dir}/image-{pipeline_info["label"].replace("+", "plus").lower()}.png'
-        if os.path.exists(image_path):
-            continue
+        images_info.append((Image.open(f"test_folder/{shortname}.jpg"), "target watch model"))
         # Initialize pipeline
-        pipeline = AutoPipelineForText2Image.from_pretrained(
+        pipeline = FluxPipeline.from_pretrained(
             pipeline_info["pretrained_model"],
-            text_encoder=text_encoder_1,
-            text_encoder_2=text_encoder_2,
-            vae=vae,
             torch_dtype=float16,
         ).to("cuda")
+        pipeline.enable_model_cpu_offload()
 
         # Load LoRA weights if specified
         if "lora" in pipeline_info:
             pipeline.load_lora_weights(
-                pipeline_info["lora"]["weights"],
-                weight_name=pipeline_info["lora"]["weight_name"],
+                pipeline_info["lora"]["model"],
+                #weight_name=pipeline_info["lora"]["weight_name"],
             )
 
         # Generate image with specified settings
@@ -150,10 +102,11 @@ for shortname, prompt in prompts.items():
         if "lora" in pipeline_info:
             pipeline.unload_lora_weights()
         del pipeline
-        image.save(image_path, format="PNG")
+        #image.save(image_path, format="PNG")
 
         images_info.append((image, pipeline_info["label"]))
 
 
     # Combine and label images
-    combine_and_label_images(images_info, f"{target_dir}/combined_image.png")
+    print("images_info: ", images_info)
+    combine_and_label_images(images_info, f"{target_dir}/{shortname}_combined_image.png")
