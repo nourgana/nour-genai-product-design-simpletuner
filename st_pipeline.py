@@ -17,6 +17,7 @@ from google.genai import types
 from io import BytesIO
 import os 
 from utils import combine_images_horizontally
+from clip_score import compute_clip_scores
 
 lora_model = "output/models/checkpoint-4500"
 
@@ -234,9 +235,12 @@ def main():
 
             # Step 3: Return images in a row
             cols = st.columns(num_images)
+            
+            scores = compute_clip_scores(images=st.session_state['images'], text=st.session_state['edited_text'])
+            
             for i, col in enumerate(cols):
                 with col:
-                    caption = f"Example {i+1}"
+                    caption = f"Example {i+1} - score {scores[i][0]}"
                     if i==2:
                         caption="imagen3"
                     st.image(st.session_state['images'][i], caption=caption, use_column_width=True)
