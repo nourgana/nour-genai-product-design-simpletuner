@@ -24,10 +24,10 @@ lora_model = "output/models/checkpoint-4500"
 def generate_images(prompt, seed=42, custom=True):
     torch.cuda.empty_cache()
     pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16)
-    #cpipe.enable_model_cpu_offload()
+    pipe.enable_model_cpu_offload()
     if custom:
         pipe.load_lora_weights(lora_model)
-    pipe.to("cuda")
+    #pipe.to("cuda")
 
     torch.cuda.empty_cache()
 
@@ -35,9 +35,10 @@ def generate_images(prompt, seed=42, custom=True):
         prompt, 
         num_inference_steps=24, 
         guidance_scale=5.0,
-        generator=torch.Generator("cpu").manual_seed(seed)
+        generator=torch.Generator("cpu").manual_seed(seed),
+        max_sequence_length=512
     ).images[0]
-    
+     
     del pipe
     return image
 
@@ -219,10 +220,12 @@ def main():
 
         # Validate the edited text with a button
         if st.button("Validate Text") :
-            num_images = st.slider("Choose the number of images to generate:", min_value=1, max_value=10, value=2)
-            with st.spinner('Generating images...'):
-                st.session_state['images'] = [generate_images(st.session_state['edited_text'], seed=42+i) for i in range(num_images)] #Use edited text
-                
+            st.session_state['num_images'] = st.slider("Choose the number of images to generate:", min_value=0, value=2, max_value=10)
+            #num_images = st.number_input("Choose the number of images to generate", value=None)
+            if st.session_state['num_images']>0:
+                with st.spinner(f'Generating images...'):
+                    st.session_state['images'] = [generate_images(st.session_state['edited_text'], seed=42+i) for i in range(st.session_state['num_images'])] #Use edited text
+                    
         with open(f"streamlit_app/{st.session_state['ambassador']}_{st.session_state['theme']}.txt", "w") as f:
             f.write(st.session_state['edited_text'])
             f.close()
@@ -231,16 +234,16 @@ def main():
             st.write("Final Text:")
             st.write(st.session_state['edited_text'])
             
-            #st.session_state['images'].append(imagen3(prompt=st.session_state['edited_text'])[0])
+            st.session_state['images'].append(imagen3(prompt=st.session_state['edited_text'])[0])
 
             # Step 3: Return images in a row
-            cols = st.columns(num_images)
+            cols = st.columns(st.session_state['num_images'])
             
             scores = compute_clip_scores(images=st.session_state['images'], text=st.session_state['edited_text'])
             
             for i, col in enumerate(cols):
                 with col:
-                    caption = f"Example {i+1} - score {scores[i][0]}"
+                    caption = f"Example {i+1} - CLIP score : {scores[i][0]}"
                     if i==2:
                         caption="imagen3"
                     st.image(st.session_state['images'][i], caption=caption, use_column_width=True)

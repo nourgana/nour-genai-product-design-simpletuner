@@ -22,4 +22,7 @@ output
 streamlit_app
 simpletuner_sdk
 
+#files 
+service_worker.py
+
 nohup.out
