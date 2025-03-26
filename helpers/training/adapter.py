@@ -4,6 +4,7 @@ import safetensors.torch
 
 
 def determine_adapter_target_modules(args, unet, transformer):
+    print('args.flux_lora_target:', args.flux_lora_target)
     if unet is not None:
         return ["to_k", "to_q", "to_v", "to_out.0"]
     elif transformer is not None:
@@ -90,7 +91,7 @@ def determine_adapter_target_modules(args, unet, transformer):
             target_modules = [
                 "single_transformer_blocks.7.proj_out",
             ]
-
+        print('target modules:', target_modules)
         return target_modules
 
 
