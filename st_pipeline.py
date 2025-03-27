@@ -9,6 +9,7 @@ from vertexai.generative_models import (
     HarmBlockThreshold,
     HarmCategory, Part, Image
 )
+import vertexai.generative_models as genai
 import json
 import ast 
 import PIL 
@@ -24,23 +25,24 @@ lora_model = "output/models/checkpoint-4500"
 def generate_images(prompt, seed=42, custom=True):
     torch.cuda.empty_cache()
     pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16)
-    pipe.enable_model_cpu_offload()
+    #pipe.enable_model_cpu_offload()
     if custom:
         pipe.load_lora_weights(lora_model)
-    #pipe.to("cuda")
+    pipe.to("cuda")
 
     torch.cuda.empty_cache()
 
-    image = pipe(
+    images = pipe(
         prompt, 
-        num_inference_steps=24, 
+        num_inference_steps=25, 
         guidance_scale=5.0,
         generator=torch.Generator("cpu").manual_seed(seed),
-        max_sequence_length=512
-    ).images[0]
+        max_sequence_length=512,
+        num_images_per_prompt=2
+    ).images
      
     del pipe
-    return image
+    return images
 
 vertexai_project_id = "grp-prd-lvmhai-ngna1"
 vertexai_location = "europe-west4"
@@ -69,7 +71,7 @@ response_schema = {
 
 # -------------------------------------------------------------------------------- NOTEBOOK-CELL: CODE
 gemini = GenerativeModel("gemini-2.0-flash",
-                                   system_instruction=["You are a Hublot Watch Designer"],
+                                   system_instruction=["You are a highly creative and experienced watch designer specializing in limited edition luxury watches. Your task is to imagine and describe an original visual design for a new Hublot limited edition watch"],
 
                                    generation_config = GenerationConfig(
                                        response_mime_type="application/json",
@@ -85,6 +87,7 @@ gemini = GenerativeModel("gemini-2.0-flash",
     HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
     HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
     HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH})
+
 
 # -------------------------------------------------------------------------------- NOTEBOOK-CELL: CODE
 
@@ -111,49 +114,50 @@ def imagen3(prompt, number_of_images=1):
 def generate_prompt(ambassador, theme, movement):
     
     prompt = f"""
+    
+    You will be provided with the following information:
 
-    Imagine an original visual brief for the next Hublot limited edition watch in collaboration with {ambassador} as part of a {theme} partnership.
-    A limited edition watch in Hublot's collaboration refers to a uniquely designed timepiece featuring exclusive materials or designs and representing and embodying the essence and identity of the collaborating entity (ambassador/theme).
-    
-    These are the elements that are expected and absolutely necessary.
-    
+    Ambassador: {ambassador}
+    Theme: {theme}
+    Movement Type: {movement}
+
+    Instructions:
+
     Proceed in two steps:
-    
-    1. Visual Description: What would the watch look like? 
-    Include in the description the following elements in this order (comprehensive list):
-    - Case 
-    - Bezel 
-    - Mouvement type : {movement}
-    - Strap 
-    - Dial 
-    - Indexes 
-    - Hands 
-    - Text inscriptions 
-    
-    Keep the description the shortest possible, let it be keyword based, concise and straight to the point. 
-    
-    Here are some exemples of the expected ouput for the visual description:
-    
-    - Collaboration with ARTURO FUENTE:
-    Shiny King Gold case set with white brilliant-cut diamonds and polished King Gold bezel set with white brilliant-cut diamonds. Automatic chronograph movement. Chocolate calfskin leather strap. Brown dial. Baton indexes. Red glaive hands. Inscription "Forbidden"
-    
-    - Collaboration with FIFA WORLD CUP:
-    Front view of a Hublot watch. Case in polished satin-finished gold and bezel in polished satin-finished gold. Automatic movement. Black gummy alligator strap. King gold dial with the world cup embossed. Stick indexes. Sword-shaped hands.
-    
-    - Collaboration with Takashi Murakami: 
-    Satin-finished polished black ceramic case, satin-finished polished black ceramic bezel. Automatic Unico Manufacture movement. Lined black rubber strap. Paved dial featuring features a Takashi Murakami smiling flower motif made of blue and multicolored gemstones. Sword hands.
+
+    STEP 1. Visual Description:
+
+    Imagine and describe the visual design of the Hublot limited edition watch created in collaboration with [ambassador] as part of a [theme] partnership. 
+    It should be a unique timepiece with an exclusive design representing the essence and identity of the collaborating entity. 
+    Incorporate metaphors, subtle representations, or concepts in the design that resonate with the collaboration. Choose colors accordingly.
+    Be creative but consistent. The design should make sense with the ambassador and the theme of the partnership.
+
+    Describe the following elements in this order: Case, Bezel, Movement type: [movement], Strap, Dial, Indexes, Hands, Text inscriptions.
+
+    Keep the description short but concise, keyword-based, and straight to the point. No bullet points.
+
+    STEP 2. Symbolism:
+
+    Explain the symbolism of this collaboration and your design choices. Why did you choose this specific design to represent the ambassador and theme?
 
     Constraints:
-    NO portraits allowed. 
-    NO description of elements in non-seen areas of the watch like the case back.
-    NO bullet points.
-    
-    
-    2. What is the symbolism of this collaboration? 
-    Explain your choice for this collaboration with the ambassador on this theme.
-    
+
+    * NO portraits allowed.
+    * Refrain from describing elements in non-seen areas of the watch, like the case back.
+
+
+    Examples:
+
+    Collaboration with ARTURO FUENTE:
+    Shiny King Gold case set with white brilliant-cut diamonds and polished King Gold bezel set with white brilliant-cut diamonds. Automatic chronograph movement. Chocolate calfskin leather strap. Brown dial. Baton indexes. Red glaive hands. Inscription "Forbidden"
+
+    Collaboration with FIFA WORLD CUP:
+    Front view of a Hublot watch. Case in polished satin-finished gold and bezel in polished satin-finished gold. Automatic movement. Black gummy alligator strap. King gold dial with the world cup embossed. Stick indexes. Sword-shaped hands.
+
+    Collaboration with Takashi Murakami:
+    Satin-finished polished black ceramic case, satin-finished polished black ceramic bezel. Automatic Unico Manufacture movement. Lined black rubber strap. Paved dial featuring features a Takashi Murakami smiling flower motif made of blue and multicolored gemstones. Sword hands.
+
     """
-    
     return prompt
     
 # Main app function
@@ -224,7 +228,7 @@ def main():
             #num_images = st.number_input("Choose the number of images to generate", value=None)
             if st.session_state['num_images']>0:
                 with st.spinner(f'Generating images...'):
-                    st.session_state['images'] = [generate_images(st.session_state['edited_text'], seed=42+i) for i in range(st.session_state['num_images'])] #Use edited text
+                    st.session_state['images'] = generate_images(st.session_state['edited_text'] + "High Realism and quality.") 
                     
         with open(f"streamlit_app/{st.session_state['ambassador']}_{st.session_state['theme']}.txt", "w") as f:
             f.write(st.session_state['edited_text'])
@@ -234,19 +238,20 @@ def main():
             st.write("Final Text:")
             st.write(st.session_state['edited_text'])
             
-            st.session_state['images'].append(imagen3(prompt=st.session_state['edited_text'])[0])
+            #st.session_state['images'].append(imagen3(prompt=st.session_state['edited_text'])[0])
 
             # Step 3: Return images in a row
             cols = st.columns(st.session_state['num_images'])
             
-            scores = compute_clip_scores(images=st.session_state['images'], text=st.session_state['edited_text'])
+            #scores = compute_clip_scores(images=st.session_state['images'], text=st.session_state['edited_text'])
             
             for i, col in enumerate(cols):
                 with col:
-                    caption = f"Example {i+1} - CLIP score : {scores[i][0]}"
+                    #caption = f"Example {i+1} - CLIP score : {scores[i][0]}"
+                    caption = f"Example {i+1}"
                     if i==2:
                         caption="imagen3"
-                    st.image(st.session_state['images'][i], caption=caption, use_column_width=True)
+                    st.image(st.session_state['images'][i], caption=caption, use_container_width=True)
                     st.session_state['images'][i].save(f"streamlit_app/{st.session_state['ambassador']}_{st.session_state['theme']}_{caption}.jpg")
                     
             #combine_images_horizontally(st.session_state['images'], f"streamlit_app/{st.session_state['ambassador']}_{st.session_state['theme']}_combined.jpg",
